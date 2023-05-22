@@ -1,0 +1,42 @@
+﻿<Properties StartupConfiguration="{CD9A77D6-3D4C-4FDB-B230-373479A46EED}|https">
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+  <MonoDevelop.Ide.DebuggingService.Breakpoints>
+    <BreakpointStore />
+  </MonoDevelop.Ide.DebuggingService.Breakpoints>
+  <MonoDevelop.Ide.Workbench ActiveDocument="PowerDispense/Controllers/PowerController.cs">
+    <Files>
+      <File FileName="PowerDispense/PowerTransaction.cs" Line="12" Column="17" />
+      <File FileName="PowerDispense/Controllers/WeatherForecastController.cs" Line="1" Column="1" />
+      <File FileName="PowerDispense/Services/AEDCService.cs" Line="25" Column="10" />
+      <File FileName="PowerDispense/Models/DTO/PowerRequest.cs" Line="8" Column="54" />
+      <File FileName="PowerDispense/Services/EKEDCService.cs" Line="40" Column="55" />
+      <File FileName="PowerDispense/Interfaces/IPowerService.cs" Line="10" Column="26" />
+      <File FileName="PowerDispense/Models/MeterInfo.cs" Line="4" Column="15" />
+      <File FileName="PowerDispense/MockData/MeterInfoSampleData.cs" Line="28" Column="34" />
+      <File FileName="PowerDispense/Controllers/PowerController.cs" Line="62" Column="14" />
+      <File FileName="PowerDispense/Program.cs" Line="23" Column="22" />
+      <File FileName="PowerDispense/Services/PowerServiceSwitch.cs" Line="23" Column="38" />
+      <File FileName="PowerDispense/Interfaces/ICanBorrowPower.cs" Line="7" Column="23" />
+    </Files>
+    <Pads>
+      <Pad Id="ProjectPad">
+        <State name="__root__">
+          <Node name="PowerDispense" expanded="True" selected="True">
+            <Node name="PowerDispense" expanded="True">
+              <Node name="Controllers" expanded="True" />
+              <Node name="Interfaces" expanded="True" />
+              <Node name="MockData" expanded="True" />
+              <Node name="Models" expanded="True">
+                <Node name="DTO" expanded="True" />
+              </Node>
+              <Node name="Services" expanded="True" />
+            </Node>
+          </Node>
+        </State>
+      </Pad>
+    </Pads>
+  </MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.ItemProperties.PowerDispense PreferredExecutionTarget="/Applications/Google Chrome.app" />
+  <MultiItemStartupConfigurations />
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+</Properties>
