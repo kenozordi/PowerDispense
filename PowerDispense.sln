@@ -5,6 +5,8 @@ VisualStudioVersion = 25.0.1704.2
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PowerDispense", "PowerDispense\PowerDispense.csproj", "{CD9A77D6-3D4C-4FDB-B230-373479A46EED}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PowerDispense.Tests", "PowerDispense.Tests\PowerDispense.Tests.csproj", "{996F9015-E0AA-415B-93DE-49C57EB61C74}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{CD9A77D6-3D4C-4FDB-B230-373479A46EED}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CD9A77D6-3D4C-4FDB-B230-373479A46EED}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CD9A77D6-3D4C-4FDB-B230-373479A46EED}.Release|Any CPU.Build.0 = Release|Any CPU
+		{996F9015-E0AA-415B-93DE-49C57EB61C74}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{996F9015-E0AA-415B-93DE-49C57EB61C74}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{996F9015-E0AA-415B-93DE-49C57EB61C74}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{996F9015-E0AA-415B-93DE-49C57EB61C74}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

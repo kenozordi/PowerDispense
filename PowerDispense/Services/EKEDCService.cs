@@ -31,7 +31,7 @@ namespace PowerDispense.Services
                 && meterInfo.MeterProvider == powerRequest.MeterProvider
                 .ToString())
                 .SingleOrDefault();
-            return meterInfo is not null ? meterInfo : null;
+            return meterInfo;
         }
 
         public PowerTransaction Borrow(PowerRequest powerRequest)
