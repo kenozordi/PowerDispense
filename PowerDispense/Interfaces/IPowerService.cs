@@ -7,12 +7,8 @@ namespace PowerDispense.Interfaces
 {
 	public interface IPowerService
 	{
-        public List<MeterInfo> AllMeterInfo()
-        {
-            return MeterInfoSampleData.meterInfos;
-        }
-        public PowerTransaction Purchase(PowerRequest powerRequest);
-        public MeterInfo? ValidateMeter(PowerRequest powerRequest);
+        PowerTransaction Purchase(PowerRequest powerRequest);
+        Task<MeterInfo>? ValidateMeter(PowerRequest powerRequest);
 
     }
 }

@@ -9,7 +9,7 @@ namespace PowerDispense.Tests;
 public class AEDCServiceTest
 {
     [Fact]
-    public void ValidateMeter_ReturnsMeterInfo()
+    public async void ValidateMeter_ReturnsMeterInfo()
     {
         // Arrange
         var powerRequest = new PowerRequest()
@@ -22,7 +22,7 @@ public class AEDCServiceTest
         var AEDCService = new AEDCService();
 
         // Act
-        var actual = AEDCService.ValidateMeter(powerRequest);
+        var actual = await AEDCService.ValidateMeter(powerRequest);
         var expected = MeterInfoSampleData.meterInfos.Where(meter => meter.MeterNo == powerRequest.MeterNo).SingleOrDefault();
         
         // Assert

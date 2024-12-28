@@ -24,7 +24,7 @@ namespace PowerDispense.Services
             };
         }
 
-        public MeterInfo? ValidateMeter(PowerRequest powerRequest)
+        public async Task<MeterInfo>? ValidateMeter(PowerRequest powerRequest)
         {
             var meterInfo = MeterInfoSampleData.meterInfos.Where(meterInfo
                 => meterInfo.MeterNo == powerRequest.MeterNo
