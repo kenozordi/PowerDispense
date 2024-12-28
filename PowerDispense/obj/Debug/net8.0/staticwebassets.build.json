@@ -1,11 +1,12 @@
 {
   "Version": 1,
-  "Hash": "74aSwebVoWE8GRoEAitlbTZS1NbqWIXbJEFUJ4odziw=",
+  "Hash": "S4TzgG4T/aqr/Rnbp/1brpCbhjKmoI9Nakr8ZPgOQIg=",
   "Source": "PowerDispense",
   "BasePath": "_content/PowerDispense",
   "Mode": "Default",
   "ManifestType": "Build",
   "ReferencedProjectsConfiguration": [],
   "DiscoveryPatterns": [],
-  "Assets": []
+  "Assets": [],
+  "Endpoints": []
 }

@@ -1,4 +1,11 @@
-﻿using PowerDispense.Interfaces;
+﻿using PowerDispense.Factories;
+using PowerDispense.IFactories;
+using PowerDispense.IFactories.IRepoFactories;
+using PowerDispense.Interfaces;
+using PowerDispense.Interfaces.IRepositories;
+using PowerDispense.Interfaces.IServices;
+using PowerDispense.Models.Config;
+using PowerDispense.Repositories.Power;
 using PowerDispense.Services;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -10,10 +17,19 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+//register configurations
+builder.Services.Configure<ConnectionStrings>(builder.Configuration.GetSection(nameof(ConnectionStrings)));
+
 //register DI services
-builder.Services.AddScoped<IPowerService, AEDCService>();
-builder.Services.AddScoped<IPowerService, EKEDCService>();
-builder.Services.AddScoped<ICanBorrowPower, EKEDCService>();
+builder.Services.AddScoped<IMeterService, MeterService>();
+builder.Services.AddSingleton<IPowerServiceFactory, PowerServiceSwitch>();
+builder.Services.AddScoped<AEDCService>();
+builder.Services.AddScoped<EKEDCService>();
+builder.Services.AddSingleton<IPowerRepoFactory, PowerRepoFactory>();
+builder.Services.AddScoped<RedisPowerRepo>();
+builder.Services.AddScoped<FilePowerRepo>();
+
+builder.Services.AddScoped<IRaffleDrawService, RaffleDrawService>();
 
 var app = builder.Build();
 

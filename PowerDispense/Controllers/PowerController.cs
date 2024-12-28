@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using PowerDispense.IFactories;
 using PowerDispense.Interfaces;
 using PowerDispense.Models;
 using PowerDispense.Models.DTO;
@@ -13,13 +14,13 @@ namespace PowerDispense.Controllers
     [Route("api/[controller]")]
     public class PowerController : Controller
     {
-        public IPowerService _powerService;
-        public ICanBorrowPower _borrowPowerService;
+        public IPowerServiceFactory _powerServiceFactory;
+        public IMeterService _meterService;
 
-        public PowerController(IPowerService powerService, ICanBorrowPower canBorrowPower)
+        public PowerController(IPowerServiceFactory powerServiceFactory, IMeterService meterService)
         {
-            _powerService = powerService;
-            _borrowPowerService = canBorrowPower;
+            _powerServiceFactory = powerServiceFactory;
+            _meterService = meterService;
         }
 
         [HttpGet]
@@ -28,8 +29,7 @@ namespace PowerDispense.Controllers
         {
             try
             {
-                var meterInfos = _powerService.AllMeterInfo();
-
+                var meterInfos = _meterService.AllMeterInfo();
                 return meterInfos is not null ? Ok(meterInfos) : BadRequest("No meter available");
             }
             catch (Exception ex)
@@ -41,16 +41,16 @@ namespace PowerDispense.Controllers
         
         // POST api/power
         [HttpPost]
-        public ActionResult<PowerTransaction> PurchasePower([FromBody]PowerRequest powerRequest)
+        public async Task<ActionResult<PowerTransaction>> PurchasePowerAsync([FromBody]PowerRequest powerRequest)
         {
             try
             {
-                var meterInfo = _powerService.ValidateMeter(powerRequest);
+                var powerService = _powerServiceFactory.GetPowerService(powerRequest.MeterProvider);
+                var meterInfo = await powerService.ValidateMeter(powerRequest);
 
                 if (meterInfo is not null)
                 {
-                    _powerService = PowerServiceSwitch.GetPowerService(powerRequest.MeterProvider);
-                    var powerTransaction = _powerService.Purchase(powerRequest);
+                    var powerTransaction = powerService.Purchase(powerRequest);
                     return Ok(powerTransaction);
                 }
 
@@ -69,18 +69,19 @@ namespace PowerDispense.Controllers
         {
             try
             {
-                var meterInfo = _powerService.ValidateMeter(powerRequest);
+                var powerService = _powerServiceFactory.GetPowerService(powerRequest.MeterProvider);
+                var meterInfo = powerService.ValidateMeter(powerRequest);
 
                 if (meterInfo is not null)
                 {
-                    _borrowPowerService = PowerServiceSwitch.GetPowerBorrowService(powerRequest.MeterProvider);
-                    var powerTransaction = _borrowPowerService.Borrow(powerRequest);
+                    var borrowPowerService = _powerServiceFactory.GetBorrowPowerService(powerRequest.MeterProvider);
+                    var powerTransaction = borrowPowerService.Borrow(powerRequest);
                     return Ok(powerTransaction);
                 }
 
                 return BadRequest("Unable to validate meter");
             }
-            catch (NotImplementedException message)
+            catch (NotImplementedException ex)
             {
                 return Problem("This feature is not available for you yet");
             }
