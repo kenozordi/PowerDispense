@@ -21,7 +21,7 @@ namespace PowerDispense.Repositories.Power
         {
             var meterInfo = MeterInfoSampleData.meterInfos.Where(meterInfo
                 => meterInfo.MeterNo == powerRequest.MeterNo
-                && meterInfo.MeterProvider == powerRequest.MeterProvider
+                && meterInfo.PowerProvider == powerRequest.MeterProvider
                 .ToString())
                 .SingleOrDefault();
             return meterInfo;

@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("PowerDispense")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+ff8919fc996171a46ea042ac94c658b26b254fc3")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+506b1ec8b1e42a41f4a2878a4df3d816becf967d")]
 [assembly: System.Reflection.AssemblyProductAttribute("PowerDispense")]
 [assembly: System.Reflection.AssemblyTitleAttribute("PowerDispense")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

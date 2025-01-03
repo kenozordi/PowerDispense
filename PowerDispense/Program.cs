@@ -17,11 +17,13 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-//register configurations
+// Register appsettings.json configurations
 builder.Services.Configure<ConnectionStrings>(builder.Configuration.GetSection(nameof(ConnectionStrings)));
 
-//register DI services
+// Register DI services
+builder.Services.AddSingleton<ConfigService>();
 builder.Services.AddScoped<IMeterService, MeterService>();
+builder.Services.AddScoped<IPowerProviderHealth, PowerProviderHealthService>();
 builder.Services.AddSingleton<IPowerServiceFactory, PowerServiceSwitch>();
 builder.Services.AddScoped<AEDCService>();
 builder.Services.AddScoped<EKEDCService>();

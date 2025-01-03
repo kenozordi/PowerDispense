@@ -26,7 +26,7 @@ namespace PowerDispense.Repositories.Power
                 var muxer = ConnectionMultiplexer.Connect(redisConnectionString);
                 var db = muxer.GetDatabase();
 
-                var meterKey = new RedisKey($"{CacheKey.Meter}:{meterInfo.MeterProvider}:{meterInfo.MeterNo}");
+                var meterKey = new RedisKey($"{CacheKey.Meter}:{meterInfo.PowerProvider}:{meterInfo.MeterNo}");
                 return db.StringSet(
                     meterKey,
                     JsonConvert.SerializeObject(meterInfo),

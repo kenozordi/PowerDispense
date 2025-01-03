@@ -24,14 +24,17 @@ namespace PowerDispense.Services
             };
         }
 
-        public async Task<MeterInfo>? ValidateMeter(PowerRequest powerRequest)
+        public async Task<MeterInquiryResponse>? ValidateMeter(PowerRequest powerRequest)
         {
             var meterInfo = MeterInfoSampleData.meterInfos.Where(meterInfo
                 => meterInfo.MeterNo == powerRequest.MeterNo
-                && meterInfo.MeterProvider == powerRequest.MeterProvider
+                && meterInfo.PowerProvider == powerRequest.MeterProvider
                 .ToString())
                 .SingleOrDefault();
-            return meterInfo;
+            return new MeterInquiryResponse()
+            {
+                MeterInfo = meterInfo
+            };
         }
     }
 }

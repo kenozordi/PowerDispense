@@ -7,14 +7,9 @@ namespace PowerDispense.Models
         public string? CustomerName { get; set; }
         public string? Address { get; set; }
         public string? MeterNo { get; set; }
-        public string? MeterProvider { get; set; }
+        public string? PowerProvider { get; set; }
         public int Debt { get; set; }
 
-        public enum MeterProviders
-        {
-            AEDC,
-            EKEDC
-        }
     }
 }
 
