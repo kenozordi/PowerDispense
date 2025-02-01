@@ -1,7 +1,7 @@
-﻿using PowerDispense.Interfaces;
-using PowerDispense.Models;
+﻿using PowerDispense.Interfaces.IServices;
+using PowerDispense.Models.Enum;
 
-namespace PowerDispense.IFactories
+namespace PowerDispense.Interfaces.IFactories
 {
     public interface IPowerServiceFactory
     {
@@ -10,13 +10,13 @@ namespace PowerDispense.IFactories
         /// </summary>
         /// <param name="meterProvider"></param>
         /// <returns></returns>
-        IPowerService GetPowerService(MeterInfo.MeterProviders meterProvider);
+        IPowerService GetPowerService(PowerProvider meterProvider);
 
         /// <summary>
         /// Get the Service to Borrow Power by Meter Provider
         /// </summary>
         /// <param name="meterProvider"></param>
         /// <returns></returns>
-        ICanBorrowPower GetBorrowPowerService(MeterInfo.MeterProviders meterProvider);
+        ICanBorrowPower GetBorrowPowerService(PowerProvider meterProvider);
     }
 }

@@ -1,16 +1,16 @@
 ﻿using System;
-using PowerDispense.Interfaces;
+using PowerDispense.Interfaces.IServices;
 using PowerDispense.MockData;
 using PowerDispense.Models;
 using PowerDispense.Models.DTO;
 
 namespace PowerDispense.Services
 {
-	public class AEDCService : IPowerService
+    public class AEDCService : IPowerService
 	{
 		const int serviceCharge = 100;
 
-        public PowerTransaction Purchase(PowerRequest powerRequest)
+        public async Task<PowerTransaction> Purchase(PowerRequest powerRequest)
         {
             var meterInfo = MeterInfoSampleData.meterInfos.Where(meter => meter.MeterNo == powerRequest.MeterNo).SingleOrDefault();
             return new PowerTransaction()
@@ -24,14 +24,17 @@ namespace PowerDispense.Services
             };
         }
 
-        public async Task<MeterInfo>? ValidateMeter(PowerRequest powerRequest)
+        public async Task<MeterInquiryResponse>? ValidateMeter(PowerRequest powerRequest)
         {
             var meterInfo = MeterInfoSampleData.meterInfos.Where(meterInfo
                 => meterInfo.MeterNo == powerRequest.MeterNo
                 && meterInfo.MeterProvider == powerRequest.MeterProvider
                 .ToString())
                 .SingleOrDefault();
-            return meterInfo;
+            return new MeterInquiryResponse()
+            {
+                MeterInfo = meterInfo
+            };
         }
     }
 }

@@ -1,4 +1,4 @@
-﻿using PowerDispense.IFactories.IRepoFactories;
+﻿using PowerDispense.Interfaces.IFactories.IRepoFactories;
 using PowerDispense.Interfaces.IRepositories;
 using PowerDispense.Models.Enum;
 using PowerDispense.Repositories.Power;

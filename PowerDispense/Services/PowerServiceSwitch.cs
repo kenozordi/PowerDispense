@@ -1,11 +1,11 @@
 ﻿using System;
-using PowerDispense.IFactories;
-using PowerDispense.Interfaces;
-using PowerDispense.Models;
+using PowerDispense.Interfaces.IFactories;
+using PowerDispense.Interfaces.IServices;
+using PowerDispense.Models.Enum;
 
 namespace PowerDispense.Services
 {
-	public class PowerServiceSwitch : IPowerServiceFactory
+    public class PowerServiceSwitch : IPowerServiceFactory
     {
         private readonly IServiceProvider _serviceProvider;
         public PowerServiceSwitch(IServiceProvider serviceProvider)
@@ -13,15 +13,15 @@ namespace PowerDispense.Services
             _serviceProvider = serviceProvider;
         }
 
-        public IPowerService GetPowerService(MeterInfo.MeterProviders meterProvider)
+        public IPowerService GetPowerService(PowerProvider meterProvider)
 		{
             using var scope = _serviceProvider.CreateScope();
 
             switch (meterProvider)
 			{
-				case MeterInfo.MeterProviders.AEDC:
+				case PowerProvider.AEDC:
                     return scope.ServiceProvider.GetRequiredService<AEDCService>();
-                case MeterInfo.MeterProviders.EKEDC:
+                case PowerProvider.EKEDC:
                     return scope.ServiceProvider.GetRequiredService<EKEDCService>();
                 default:
 					throw new NotImplementedException();
@@ -29,13 +29,13 @@ namespace PowerDispense.Services
 
 		}
 
-        public ICanBorrowPower GetBorrowPowerService(MeterInfo.MeterProviders meterProvider)
+        public ICanBorrowPower GetBorrowPowerService(PowerProvider meterProvider)
         {
             using var scope = _serviceProvider.CreateScope();
 
             switch (meterProvider)
             {
-                case MeterInfo.MeterProviders.EKEDC:
+                case PowerProvider.EKEDC:
                     return scope.ServiceProvider.GetRequiredService<EKEDCService>();
                 default:
                     throw new NotImplementedException();
