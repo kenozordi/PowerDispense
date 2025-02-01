@@ -1,7 +1,7 @@
 ﻿using PowerDispense.Interfaces.IRepositories;
 using PowerDispense.Models.Enum;
 
-namespace PowerDispense.IFactories.IRepoFactories
+namespace PowerDispense.Interfaces.IFactories.IRepoFactories
 {
     public interface IPowerRepoFactory
     {

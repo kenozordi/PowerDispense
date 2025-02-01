@@ -2,10 +2,10 @@
 using PowerDispense.Models;
 using PowerDispense.Models.DTO;
 
-namespace PowerDispense.Interfaces
+namespace PowerDispense.Interfaces.IServices
 {
-	public interface ICanBorrowPower
-	{
+    public interface ICanBorrowPower
+    {
         public PowerTransaction Borrow(PowerRequest powerRequest);
 
     }

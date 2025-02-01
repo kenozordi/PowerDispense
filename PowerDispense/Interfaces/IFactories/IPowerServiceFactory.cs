@@ -1,7 +1,7 @@
-﻿using PowerDispense.Interfaces;
+﻿using PowerDispense.Interfaces.IServices;
 using PowerDispense.Models.Enum;
 
-namespace PowerDispense.IFactories
+namespace PowerDispense.Interfaces.IFactories
 {
     public interface IPowerServiceFactory
     {

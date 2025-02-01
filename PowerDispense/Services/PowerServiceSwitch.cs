@@ -1,6 +1,6 @@
 ﻿using System;
-using PowerDispense.IFactories;
-using PowerDispense.Interfaces;
+using PowerDispense.Interfaces.IFactories;
+using PowerDispense.Interfaces.IServices;
 using PowerDispense.Models.Enum;
 
 namespace PowerDispense.Services

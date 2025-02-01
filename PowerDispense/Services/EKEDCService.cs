@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Text;
-using PowerDispense.IFactories.IRepoFactories;
-using PowerDispense.Interfaces;
+using PowerDispense.Interfaces.IFactories.IRepoFactories;
 using PowerDispense.Interfaces.IServices;
 using PowerDispense.MockData;
 using PowerDispense.Models;
@@ -17,36 +16,40 @@ namespace PowerDispense.Services
         private readonly IPowerRepoFactory _powerRepoFactory;
         private readonly IRaffleDrawService _raffleDrawService;
         private readonly IPowerProviderHealth _powerProviderHealthService;
+        private readonly ITransactionProducer _transactionProducer;
 
         public EKEDCService(IPowerRepoFactory powerRepoFactory,
-            IRaffleDrawService raffleDrawService, IPowerProviderHealth powerProviderHealth)
+            IRaffleDrawService raffleDrawService, IPowerProviderHealth powerProviderHealth,
+            ITransactionProducer transactionProducer)
         {
             _powerRepoFactory = powerRepoFactory;
             _raffleDrawService = raffleDrawService;
             _powerProviderHealthService = powerProviderHealth;
+            _transactionProducer = transactionProducer;
         }
 
-        public PowerTransaction Purchase(PowerRequest powerRequest)
+        public async Task<PowerTransaction> Purchase(PowerRequest powerRequest)
         {
             var meterInfo = MeterInfoSampleData.meterInfos.Where(meter => meter.MeterNo == powerRequest.MeterNo).SingleOrDefault();
+            _ = Enum.TryParse(meterInfo?.MeterProvider, out PowerProvider powerProvider);
+            var trnsactionPushed = await _transactionProducer.PushTransaction(powerRequest, powerProvider);
             var powerTransaction = new PowerTransaction()
             {
                 AmountPaid = powerRequest.AmountPaid,
                 Cost = powerRequest.AmountPaid - serviceCharge,
                 MeterNo = powerRequest.MeterNo,
                 PurchaseDate = DateTime.Now,
-                message = "Processed by EKEDC",
+                message = TransactionStatus.Pending.ToString(),
                 meterInfo = meterInfo
             };
-            if (powerTransaction is not null)
+            if (trnsactionPushed)
             {
                 _raffleDrawService.AddEntry(powerRequest);
-                _ = Enum.TryParse(meterInfo.PowerProvider, out PowerProvider powerProvider);
                 _powerProviderHealthService.SetProviderHealthStatus(powerProvider, PowerProviderStatus.Stable);
             }
             else
             {
-                _powerProviderHealthService.SetProviderHealthStatus(PowerProviderStatus.Unstable);
+                _powerProviderHealthService.SetProviderHealthStatus(powerProvider, PowerProviderStatus.Unstable);
             }
             return powerTransaction;
         }

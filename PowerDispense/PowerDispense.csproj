@@ -25,5 +25,6 @@
   <ItemGroup>
     <Folder Include="Models\DTO\" />
     <Folder Include="MockData\" />
+    <Folder Include="DAO\" />
   </ItemGroup>
 </Project>

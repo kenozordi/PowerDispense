@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using PowerDispense.IFactories;
-using PowerDispense.Interfaces;
+using PowerDispense.Interfaces.IFactories;
+using PowerDispense.Interfaces.IServices;
 using PowerDispense.Models;
 using PowerDispense.Models.DTO;
 using PowerDispense.Services;
@@ -50,7 +50,7 @@ namespace PowerDispense.Controllers
 
                 if (meterInfo is not null)
                 {
-                    var powerTransaction = powerService.Purchase(powerRequest);
+                    var powerTransaction = await powerService.Purchase(powerRequest);
                     return Ok(powerTransaction);
                 }
 
@@ -80,6 +80,34 @@ namespace PowerDispense.Controllers
                 }
 
                 return BadRequest("Unable to validate meter");
+            }
+            catch (NotImplementedException ex)
+            {
+                return Problem("This feature is not available for you yet");
+            }
+            catch (Exception ex)
+            {
+                return Problem("Something went wrong, please try again later");
+            }
+
+        }
+
+        [HttpPost]
+        [Route("Search")]
+        public ActionResult<PowerTransaction> Search(
+            [FromQuery] string meterNumber, 
+            [FromQuery] string meterProvider)
+        {
+            try
+            {
+                var metername = _meterService.GetMeterName(meterNumber, meterProvider);
+
+                if (!string.IsNullOrEmpty(metername))
+                {
+                    return Ok(metername);
+                }
+
+                return BadRequest("Unable to get meter name");
             }
             catch (NotImplementedException ex)
             {

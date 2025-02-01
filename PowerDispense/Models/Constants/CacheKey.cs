@@ -9,5 +9,12 @@
 
         public const string POWER_PROVIDER_STABLE = "PowerProviders:Stable";
         public const string POWER_PROVIDER_UNSTABLE = "PowerProviders:Unstable";
+
+        // Stream
+        public const string STREAM_EKEDC = "Stream:Transaction:EKEDC";
+        public const string STREAM_AEDC = "Stream:Transaction:AEDC";
+
+        // Consumer Group
+        public const string CONSUMER_GROUP = "Stream:Consumer:Group";
     }
 }

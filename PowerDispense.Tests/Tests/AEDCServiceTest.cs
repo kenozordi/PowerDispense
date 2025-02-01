@@ -1,8 +1,12 @@
 using PowerDispense.Interfaces;
 using PowerDispense.MockData;
 using PowerDispense.Models;
+using PowerDispense.Models.Constants;
 using PowerDispense.Models.DTO;
+using PowerDispense.Models.Enum;
+using PowerDispense.Repositories.Power;
 using PowerDispense.Services;
+using System.Diagnostics.Metrics;
 
 namespace PowerDispense.Tests;
 
@@ -16,15 +20,22 @@ public class AEDCServiceTest
         {
             AmountPaid = 100,
             MeterNo = "123456",
-            MeterProvider = MeterInfo.MeterProviders.AEDC,
+            MeterProvider = PowerProvider.AEDC,
             PurchaseDate = new DateTime()
         };
         var AEDCService = new AEDCService();
 
         // Act
         var actual = await AEDCService.ValidateMeter(powerRequest);
-        var expected = MeterInfoSampleData.meterInfos.Where(meter => meter.MeterNo == powerRequest.MeterNo).SingleOrDefault();
-        
+        var meterInfo = await new FilePowerRepo().GetMeter(powerRequest);
+
+        var expected = new MeterInquiryResponse();
+        expected.PowerProviderInfo = new PowerProviderInfo()
+        {
+            Status = CacheKey.POWER_PROVIDER_STABLE
+        };
+        expected.MeterInfo = meterInfo;
+
         // Assert
         Assert.Equal(expected, actual);
     }
