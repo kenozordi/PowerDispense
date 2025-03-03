@@ -1,11 +1,13 @@
 ﻿using System;
 using PowerDispense.Models;
+using PowerDispense.Models.DTO;
 using PowerDispense.Models.Enum;
 
 namespace PowerDispense.MockData
 {
     public static class MeterInfoSampleData
 	{
+        public static List<PowerRequest> processedTransactions = new();
         public static List<MeterInfo> meterInfos = new List<MeterInfo>()
         {
             new MeterInfo()

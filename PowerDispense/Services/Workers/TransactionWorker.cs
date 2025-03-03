@@ -1,4 +1,5 @@
-﻿using PowerDispense.Interfaces.IServices;
+﻿using PowerDispense.DAO;
+using PowerDispense.Interfaces.IServices;
 
 namespace PowerDispense.Services.Workers
 {
@@ -14,45 +15,21 @@ namespace PowerDispense.Services.Workers
         }
         public (bool, string) Start()
         {
-            if (_backgroundServiceState != null && !_backgroundServiceState.IsCompleted)
-            {
-                return (false, "Service already running");
-            }
-
             _cancelTokenSource = new CancellationTokenSource();
             ExecuteAsync(_cancelTokenSource.Token);
             return (true, "Service running");
         }
 
-        public (bool, string) Stop()
+        public async Task<(bool, string)> Stop()
         {
-            if(_backgroundServiceState == null || _backgroundServiceState.IsCompleted || _cancelTokenSource == null)
-            {
-                return (false, "Worker service is not running");
-            }
-
-            _cancelTokenSource.Cancel();
+            await _transactionConsumer.UnSubscribe();
             return (true, "Worker service stopped");
         }
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            _backgroundServiceState = Task.Run(async() =>
-            {
-                int delayInSeconds = 5;
-                using (var linkedTokenSource = CancellationTokenSource.CreateLinkedTokenSource(stoppingToken, _cancelTokenSource.Token))
-                {
-                    while (!linkedTokenSource.Token.IsCancellationRequested)
-                    {
-                        // Process transactions
-                        var processedTransactions = await _transactionConsumer.ProcessTransactions();
+            _backgroundServiceState = _transactionConsumer.Subscribe();
 
-                        // Delay before processing next task
-                        await Task.Delay(delayInSeconds * 1000);
-                    }
-                }
-            });
-            //_backgroundServiceState = Task.CompletedTask;
         }
     }
 }

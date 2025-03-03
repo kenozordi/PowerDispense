@@ -4,7 +4,7 @@ namespace PowerDispense.Interfaces.IServices
 {
     public interface IRaffleDrawService
     {
-        void AddEntry(PowerRequest powerRequest);
+        Task AddEntry(PowerRequest powerRequest);
         Task<List<string>> GetAllEntry();
     }
 }

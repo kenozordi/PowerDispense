@@ -145,9 +145,17 @@
               "target": "Package",
               "version": "[8.0.0, )"
             },
+            "Microsoft.Extensions.Caching.StackExchangeRedis": {
+              "target": "Package",
+              "version": "[9.0.1, )"
+            },
             "Newtonsoft.Json": {
               "target": "Package",
               "version": "[13.0.3, )"
+            },
+            "Redis.OM": {
+              "target": "Package",
+              "version": "[0.7.6, )"
             },
             "StackExchange.Redis": {
               "target": "Package",

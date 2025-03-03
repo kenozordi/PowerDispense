@@ -1,27 +1,33 @@
 ﻿using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
+using PowerDispense.DAO;
 using PowerDispense.Interfaces.IFactories;
 using PowerDispense.Interfaces.IServices;
+using PowerDispense.MockData;
+using PowerDispense.Models;
 using PowerDispense.Models.Config;
 using PowerDispense.Models.Constants;
 using PowerDispense.Models.DTO;
 using PowerDispense.Models.Enum;
+using Redis.OM;
 using StackExchange.Redis;
+using System.Linq;
+using System.Transactions;
 
 namespace PowerDispense.Services
 {
     public class TransactionConsumer : ITransactionConsumer
     {
         private readonly ConnectionStrings _connectionStrings;
-        private readonly IPowerProviderFactory _powerProviderFactory;
         private readonly ILogger<TransactionConsumer> _logger;
-        private CancellationTokenSource _cancellationTokenSource;
-        public TransactionConsumer(IOptions<ConnectionStrings> connectionStrings, IPowerProviderFactory powerProviderFactory,
-            ILogger<TransactionConsumer> logger)
+        private readonly IConnectionMultiplexer _redisDao;
+        private List<string> subscribedChannels = new();
+        public TransactionConsumer(IOptions<ConnectionStrings> connectionStrings,
+            ILogger<TransactionConsumer> logger, IConnectionMultiplexer redisDao)
         {
             _connectionStrings = connectionStrings.Value;
-            _powerProviderFactory = powerProviderFactory;
             _logger = logger;
+            _redisDao = redisDao;
         }
 
         public async Task<List<PowerRequest>> ProcessTransactions()
@@ -71,46 +77,52 @@ namespace PowerDispense.Services
             return processedTransactions;
         }
 
-        public async Task<List<PowerRequest>> FetchTransactions(int transPerProviderBatch, 
-            CancellationTokenSource cancellationTokenSource)
+        public async Task SeedTransactionsIndex()
         {
-            int delayInSeconds = 3;
-            var powerRequests = new List<PowerRequest>();
-            string transConsumerGroup = CacheKey.CONSUMER_GROUP;
-
-            var redisConnectionString = _connectionStrings.Redis;
-            var muxer = ConnectionMultiplexer.Connect(redisConnectionString);
-            var db = muxer.GetDatabase();
-            var providerStreamKeys = new[] { CacheKey.STREAM_AEDC, CacheKey.STREAM_EKEDC };
-            var providerStreamsPosition = new Dictionary<string, StreamPosition>();
-
-            // Set Default Stream Positions
-            foreach (var streamKey in providerStreamKeys)
-            {
-                providerStreamsPosition.Add(streamKey, new StreamPosition(streamKey, ">"));
-            }
-
-            while (!cancellationTokenSource.IsCancellationRequested)
-            {
-                foreach (var cacheStreamKey in providerStreamKeys)
-                {
-                    var readResult = await db.StreamReadGroupAsync([providerStreamsPosition[cacheStreamKey]], transConsumerGroup, cacheStreamKey, countPerStream: transPerProviderBatch);
-                    foreach (var stream in readResult)
-                    {
-                        foreach (var entry in stream.Entries)
-                        {
-                            var powerRequest = JsonConvert.DeserializeObject<PowerRequest>(entry.Values.First().Value.ToString());
-                            providerStreamsPosition[cacheStreamKey] = new StreamPosition(cacheStreamKey, entry.Id);
-                            powerRequests.Add(powerRequest);
-                            await db.StreamAcknowledgeAsync(cacheStreamKey,transConsumerGroup, entry.Id);
-                        }
-                    }
-                }
-                Task.Delay(delayInSeconds * 1000, cancellationTokenSource.Token).Wait();
-            }
-            
-            return powerRequests;
+            var redisProvider = new RedisConnectionProvider(_redisDao);
+            await redisProvider.Connection.CreateIndexAsync(typeof(PowerTransaction));
         }
+        public async Task<bool> UpdateTransactionLog(PowerTransaction powerTransaction)
+        {
+            var redisProvider = new RedisConnectionProvider(_redisDao);
+            var powerTransactions = redisProvider.RedisCollection<PowerTransaction>();
+            var key = powerTransactions.Insert(powerTransaction);
+            return true;
+        }
+        public async Task Subscribe()
+        {
+            await SeedTransactionsIndex();
+            var subscriber = _redisDao.GetSubscriber();
 
+            string[] providers = { PowerProvider.EKEDC.ToString(), PowerProvider.AEDC.ToString() };
+            foreach (var provider in providers)
+            {
+                var providerChannelKey = $"{CacheKey.CHANNEL_TRANS}:{provider}";
+                if (!subscribedChannels.Contains(providerChannelKey))
+                {
+                    var channel = await subscriber.SubscribeAsync(providerChannelKey);
+                    channel.OnMessage(msg =>
+                    {
+                        MeterInfoSampleData.processedTransactions.Add(JsonConvert.DeserializeObject<PowerRequest>(msg.Message));
+                    });
+                    subscribedChannels.Add(providerChannelKey);
+                }
+            }
+        }
+        public async Task UnSubscribe()
+        {
+            var subscriber = _redisDao.GetSubscriber();
+
+            string[] providers = { PowerProvider.EKEDC.ToString(), PowerProvider.AEDC.ToString() };
+            foreach (var provider in providers)
+            {
+                var providerChannelKey = $"{CacheKey.CHANNEL_TRANS}:{provider}";
+                if (subscribedChannels.Contains(providerChannelKey))
+                {
+                    await subscriber.UnsubscribeAsync(providerChannelKey);
+                    subscribedChannels.Remove(providerChannelKey);
+                }
+            }
+        }
     }
 }

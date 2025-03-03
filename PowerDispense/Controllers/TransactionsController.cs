@@ -16,7 +16,7 @@ namespace PowerDispense.Controllers
             _transactionWorker = transactionWorker;
         }
 
-        [HttpGet]
+        [HttpPut]
         [Route("Start")]
         public ActionResult<MeterInfo> StartQueue()
         {
@@ -37,13 +37,13 @@ namespace PowerDispense.Controllers
             
         }
         
-        [HttpGet]
+        [HttpPut]
         [Route("Stop")]
         public async Task<ActionResult<MeterInfo>> StopQueue()
         {
             try
             {
-                (bool success, string message) = _transactionWorker.Stop();
+                (bool success, string message) = await _transactionWorker.Stop();
                 if (success)
                 {
                     return Ok("transaction queue stopped");

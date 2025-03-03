@@ -15,31 +15,32 @@ namespace PowerDispense.Services
         {
             _connectionStrings = connectionStrings.Value;
         }
-        public void AddEntry(PowerRequest powerRequest)
+        public async Task AddEntry(PowerRequest powerRequest)
         {
             try
             {
                 var redisConnectionString = _connectionStrings.Redis;
                 var muxer = ConnectionMultiplexer.Connect(redisConnectionString);
                 var db = muxer.GetDatabase();
+                var transaction = db.CreateTransaction();
 
-                var raffleJustStarted = db.StringSet(
+                var raffleJustStarted = transaction.StringSetAsync(
                     key: $"{CacheKey.Raffle}:{CacheKey.Status}", 
                     value: "1", 
                     expiry: TimeSpan.FromHours(CacheKey.RaffleExpiryInHours), 
                     when: When.NotExists);
 
-                db.ListRightPush(
-                    key: $"{CacheKey.Raffle}",
+                transaction.ListRightPushAsync(
+                    key: $"{CacheKey.Raffle}:{CacheKey.Draw}",
                     value: $"{CacheKey.Meter}:{powerRequest.MeterProvider}:{powerRequest.MeterNo}");
-                if (raffleJustStarted)
-                {
-                    db.KeyExpireAsync($"{CacheKey.Raffle}", TimeSpan.FromHours(CacheKey.RaffleExpiryInHours));
-                }
+                
+                transaction.KeyExpireAsync($"{CacheKey.Raffle}:{CacheKey.Draw}", TimeSpan.FromHours(CacheKey.RaffleExpiryInHours));
+
+                transaction.Execute();
             }
             catch (Exception ex)
             {
-
+                Console.WriteLine(ex.ToString());
             }
             
 

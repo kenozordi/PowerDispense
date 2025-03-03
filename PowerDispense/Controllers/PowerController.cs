@@ -16,11 +16,14 @@ namespace PowerDispense.Controllers
     {
         public IPowerServiceFactory _powerServiceFactory;
         public IMeterService _meterService;
+        public ITransactionService _transactionService;
 
-        public PowerController(IPowerServiceFactory powerServiceFactory, IMeterService meterService)
+        public PowerController(IPowerServiceFactory powerServiceFactory, IMeterService meterService,
+            ITransactionService transactionService)
         {
             _powerServiceFactory = powerServiceFactory;
             _meterService = meterService;
+            _transactionService = transactionService;
         }
 
         [HttpGet]
@@ -45,16 +48,11 @@ namespace PowerDispense.Controllers
         {
             try
             {
-                var powerService = _powerServiceFactory.GetPowerService(powerRequest.MeterProvider);
-                var meterInfo = await powerService.ValidateMeter(powerRequest);
+                var powerTransaction = await _transactionService.PurchasePower(powerRequest);
 
-                if (meterInfo is not null)
-                {
-                    var powerTransaction = await powerService.Purchase(powerRequest);
-                    return Ok(powerTransaction);
-                }
-
-                return BadRequest("Unable to validate meter");
+                return powerTransaction is not null 
+                    ? Ok(powerTransaction)
+                    : BadRequest("Unable to purchase power");
             }
             catch (Exception ex)
             {

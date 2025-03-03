@@ -32,7 +32,8 @@ namespace PowerDispense.Services
         {
             var meterInfo = MeterInfoSampleData.meterInfos.Where(meter => meter.MeterNo == powerRequest.MeterNo).SingleOrDefault();
             _ = Enum.TryParse(meterInfo?.MeterProvider, out PowerProvider powerProvider);
-            var trnsactionPushed = await _transactionProducer.PushTransaction(powerRequest, powerProvider);
+            //var trnsactionPushed = await _transactionProducer.PushTransaction(powerRequest, powerProvider);
+            var trnsactionPushed = await _transactionProducer.PublishTransaction(powerRequest, powerProvider);
             var powerTransaction = new PowerTransaction()
             {
                 AmountPaid = powerRequest.AmountPaid,

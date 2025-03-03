@@ -3,6 +3,6 @@
     public interface ITransactionWorker
     {
         (bool, string) Start();
-        (bool, string) Stop();
+        Task<(bool, string)> Stop();
     }
 }
